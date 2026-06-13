@@ -15,6 +15,7 @@ stateDiagram-v2
     FAULT --> MANUAL_RESET : Non-recoverable
     FAULT --> SELF_CHECK : Recoverable (auto after cooldown)
     MANUAL_RESET --> IDLE : User re-plug or power cycle
+```
 
 1. IDLE
 
