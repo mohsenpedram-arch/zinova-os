@@ -1,1 +1,25 @@
+name: Create Knowledge Base
 
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: mkdir -p knowledge/standards knowledge/charging knowledge/sourcing
+      - run: echo "# IEC61851" > knowledge/standards/IEC61851.md
+      - run: echo "# IEC62196" > knowledge/standards/IEC62196.md
+      - run: echo "# IEC62752" > knowledge/standards/IEC62752.md
+      - run: echo "# Mode2" > knowledge/charging/mode2.md
+      - run: echo "# Mode3" > knowledge/charging/mode3.md
+      - run: echo "# OCPP" > knowledge/charging/ocpp.md
+      - run: echo "# China OEM Signals" > knowledge/sourcing/china_oem_signals.md
+      - run: echo "# Fake Supplier Patterns" > knowledge/sourcing/fake_supplier_patterns.md
+      - run: |
+          git config user.name "Zinova-Agent"
+          git config user.email "agent@zinova.org"
+          git add knowledge/
+          git diff --cached --quiet || git commit -m "Add knowledge base"
+          git push
