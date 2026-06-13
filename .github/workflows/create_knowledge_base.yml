@@ -1,8 +1,6 @@
-name: Create Knowledge Base Folders and Files
-
+name: Create Knowledge Base Folders and jobs
 on:
   workflow_dispatch:
-
 jobs:
   create-structure:
     runs-on: ubuntu-latest
