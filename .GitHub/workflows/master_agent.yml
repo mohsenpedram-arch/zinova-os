@@ -1,1 +1,59 @@
+```yaml
+name: ZINOVA Autonomous Sourcing Agent (Full)
+
+on:
+  schedule:
+    - cron: '0 4 * * *'           # Daily at 8:30 AM Tehran time
+  workflow_dispatch:               # Manual trigger
+    inputs:
+      discovery_mode:
+        description: 'Discovery mode: quick / full'
+        default: 'full'
+        type: choice
+        options: ['quick', 'full']
+
+jobs:
+  master-agent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install Dependencies
+        run: |
+          pip install apify-client tavily-python requests beautifulsoup4
+      
+      - name: Run Master Agent
+        env:
+          APIFY_API_TOKEN: ${{ secrets.APIFY_API_TOKEN }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+        run: python .github/scripts/master_agent.py
+      
+      - name: Upload Results as Artifact (for review)
+        uses: actions/upload-artifact@v4
+        with:
+          name: sourcing-report
+          path: |
+            vendors/SHORTLIST.md
+            vendors/shortlist_data.json
+            rfq_*.md
+            agent_report.md
+          retention-days: 14
+      
+      - name: Commit and Push Updates
+        run: |
+          git config user.name "Zinova-Agent"
+          git config user.email "agent@zinova.org"
+          git add vendors/SHORTLIST.md vendors/shortlist_data.json rfq_*.md agent_report.md
+          git diff --cached --quiet || git commit -m "Agent v3.0: auto-updated vendor shortlist and RFQs"
+          git push
+```
+
+---
 
